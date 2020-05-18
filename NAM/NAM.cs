@@ -16,6 +16,13 @@ namespace NAM
 		public string From { get; set; } = " ";
 		public string To { get; set; } = " ";
 		public bool Final { get; set; } = false;
+
+		public Rule(string from, string to, bool final)
+		{
+			From = from;
+			To = to;
+			Final = false;
+		}
 	}
 
 	public class NAM : INotifyPropertyChanged
