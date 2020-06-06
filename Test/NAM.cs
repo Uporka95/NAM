@@ -1,4 +1,5 @@
-﻿using System;
+﻿//NAM.h
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -9,80 +10,93 @@ using System.Threading.Tasks;
 
 namespace Lab2
 {
-	public class Match
+	public class Rule
 	{
-		public string from = " ";
-		public string to  = " ";
-		public bool final = false;
+		public string From { get; set; } = " ";
+		public string To { get; set; } = " ";
+		public bool Final { get; set; } = false;
 
-		public Match(string _from, string _to, bool _final)
+		public Rule(string from, string to, bool final)
 		{
-			from = _from;
-			to = _to;
-			final = _final;
+			From = from;
+			To = to;
+			Final = false;
 		}
 	}
 
-	public class MarkovMachine
+	public class NAM
 	{
-		public List<Match> rules = new List<Match>();
-		public Match curMatch;
-		private string inWord = " ";
-		private string outWord = " ";
+		public ObservableCollection<Rule> rules = new ObservableCollection<Rule>();
+		public Rule CurrentRule;
+		private string inputWord = " ";
+		private string outputWord = " ";
 
-		public bool finished = false;
-		public MarkovMachine(string word)
+
+		public bool Finished { get; set; } = false;
+		public string InputWord
 		{
-			inWord = word;
+			get => inputWord;
+			set
+			{
+				inputWord = value;
+				outputWord = value;
+			}
 		}
 
-		public void addMatch(Match rule)
+		public string OutputWord { get => outputWord; set => outputWord = value; }
+		public NAM(string word)
+		{
+			inputWord = word;
+		}
+
+		public void AddRule(Rule rule)
 		{
 			rules.Add(rule);
-			if (curMatch == null) curMatch = rule;
+			if (CurrentRule == null) CurrentRule = rule;
 
 		}
 
-		public void Start()
+		public void Execute()
 		{
-			Console.WriteLine(inWord);
-			outWord = inWord.Insert(0, " ");
-			while (finished != true)
+			Console.WriteLine(inputWord);
+			outputWord = inputWord.Insert(0, " ");
+			while (!Finished)
 			{
 				foreach (var rule in rules)
 				{
-					curMatch = rule;
-					if (!Step()) break;	
+					CurrentRule = rule;
+					if (!Step()) break;
 				}
-				
+
 			}
 		}
 
 		private bool Step()
 		{
-			string pattern = Regex.Escape(curMatch.from);
+			string pattern = Regex.Escape(CurrentRule.From);
 			Regex regex = new Regex(pattern);
 
-			if (regex.IsMatch(outWord))
+			if (regex.IsMatch(outputWord))
 			{
-				Replace(regex, curMatch.to);
-				Console.WriteLine(outWord);
-
-				if (curMatch.final)
-				{
-					finished = true;
-					return false;
-				}
+				ReplaceSubstr(regex, CurrentRule.To);
+				Console.WriteLine(outputWord);
+				return false;
+			}
+			if (CurrentRule.Final)
+			{
+				Finished = true;
 				return false;
 			}
 			return true;
 		}
 
-		private void Replace(Regex regex, string replacement)
+		private void ReplaceSubstr(Regex regex, string replacement)
 		{
 
-			outWord = regex.Replace(outWord, replacement, 1);
+			OutputWord = regex.Replace(OutputWord, replacement, 1);
 		}
 
 	}
 }
+
+

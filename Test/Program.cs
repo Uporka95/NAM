@@ -1,4 +1,5 @@
-﻿using System;
+﻿//Program.cs
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,39 +12,32 @@ namespace Lab2
 	{
 		static void Main(string[] args)
 		{
-			MarkovMachine mm = new MarkovMachine("aababa");
 
-			mm.addMatch(new Match("*b", "#b", false));
-			mm.addMatch(new Match("*a", "@a", false));
+			NAM nam = new NAM("ababbb");
 
-			mm.addMatch(new Match("#a", "a#", false));
-			mm.addMatch(new Match("@a", "a@", false));
-			mm.addMatch(new Match("@b", "b@", false));
-			mm.addMatch(new Match("#b", "b#", false));
+			nam.AddRule(new Rule("?a!", "#!a", false));
+			nam.AddRule(new Rule("?b!", "#!b", false));
+			nam.AddRule(new Rule("*a#", "a*?", false));
+			nam.AddRule(new Rule("*b#", "b*?", false));
+			nam.AddRule(new Rule("?aa", "a?a", false));
+			nam.AddRule(new Rule("?ab", "b?a", false));
+			nam.AddRule(new Rule("?ba", "a?b", false));
+			nam.AddRule(new Rule("?bb", "b?b", false));
+			nam.AddRule(new Rule("aa#", "a#a", false));
+			nam.AddRule(new Rule("ab#", "b#a", false));
+			nam.AddRule(new Rule("ba#", "a#b", false));
+			nam.AddRule(new Rule("bb#", "b#b", false));
 
-			mm.addMatch(new Match("a@", "!", false));
-			mm.addMatch(new Match("b#", "!", false));
-			mm.addMatch(new Match("a#", "a=", false));
-			mm.addMatch(new Match("b@", "b=", false));
+			nam.AddRule(new Rule("*#!", "", true));
 
-			mm.addMatch(new Match("a=", "=a", false));
-			mm.addMatch(new Match("b=", "=b", false));
-			mm.addMatch(new Match("a!", "!a", false));
-			mm.addMatch(new Match("b!", "!b", false));
+			nam.AddRule(new Rule("!a", "a!", false));
+			nam.AddRule(new Rule("!b", "b!", false));
+			nam.AddRule(new Rule("a!", "a#!", false));
+			nam.AddRule(new Rule("b!", "b#!", false));
+			nam.AddRule(new Rule(" ", "*!", false));
 
-			mm.addMatch(new Match("!a", "", true));
-			mm.addMatch(new Match("!b", "", true));
-			mm.addMatch(new Match("=a", "a", true));
-			mm.addMatch(new Match("=b", "b", true));
-
-			mm.addMatch(new Match(" ", "*", false));
-
-			mm.addMatch(new Match("b", "#b", false));
-			mm.addMatch(new Match("a", "@a", false));
-
-			mm.Start();
+			nam.Execute();
 
 		}
 	}
 }
-
